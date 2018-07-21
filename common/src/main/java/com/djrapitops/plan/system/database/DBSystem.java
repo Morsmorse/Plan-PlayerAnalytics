@@ -14,6 +14,7 @@ import com.djrapitops.plan.system.settings.locale.Locale;
 import com.djrapitops.plan.system.settings.locale.Msg;
 import com.djrapitops.plugin.api.Benchmark;
 import com.djrapitops.plugin.api.utility.log.Log;
+import com.djrapitops.plugin.task.RunnableFactory;
 import com.djrapitops.plugin.utilities.Verify;
 
 import java.util.HashSet;
@@ -26,13 +27,17 @@ import java.util.Set;
  */
 public abstract class DBSystem implements SubSystem {
 
+    protected final RunnableFactory runnableFactory;
+    
     protected Database db;
     protected Set<Database> databases;
 
-    public DBSystem() {
+    public DBSystem(RunnableFactory runnableFactory) {
+        this.runnableFactory = runnableFactory;
         databases = new HashSet<>();
     }
 
+    @Deprecated
     public static DBSystem getInstance() {
         DBSystem dbSystem = PlanSystem.getInstance().getDatabaseSystem();
         Verify.nullCheck(dbSystem, () -> new IllegalStateException("Database system was not initialized."));

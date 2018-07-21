@@ -24,17 +24,17 @@ public class ManageCommand extends TreeCmdNode {
         super.setColorScheme(plugin.getColorScheme());
         setNodeGroups(
                 new CommandNode[]{
-                        new ManageMoveCommand(),
-                        new ManageBackupCommand(),
+                        new ManageMoveCommand(plugin),
+                        new ManageBackupCommand(plugin),
                         new ManageRestoreCommand(plugin),
-                        new ManageRemoveCommand(),
+                        new ManageRemoveCommand(plugin),
                         new ManageHotSwapCommand(plugin),
-                        new ManageClearCommand(),
+                        new ManageClearCommand(plugin),
                 },
                 new CommandNode[]{
                         new ManageSetupCommand(),
                         new ManageConDebugCommand(),
-                        new ManageImportCommand(),
+                        new ManageImportCommand(plugin),
                         new ManageDisableCommand()
                 }
         );

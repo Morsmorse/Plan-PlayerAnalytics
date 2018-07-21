@@ -1,5 +1,6 @@
 package com.djrapitops.plan.command.commands.manage;
 
+import com.djrapitops.plan.PlanPlugin;
 import com.djrapitops.plan.api.exceptions.database.DBOpException;
 import com.djrapitops.plan.system.database.databases.Database;
 import com.djrapitops.plan.system.settings.Permissions;
@@ -25,11 +26,15 @@ import java.util.UUID;
  */
 public class ManageRemoveCommand extends CommandNode {
 
-    public ManageRemoveCommand() {
+    private final RunnableFactory runnableFactory;
+
+    public ManageRemoveCommand(PlanPlugin plugin) {
         super("remove|delete", Permissions.MANAGE.getPermission(), CommandType.PLAYER_OR_ARGS);
         setShortHelp(Locale.get(Msg.CMD_USG_MANAGE_REMOVE).toString());
         setArguments("<player>", "[-a]");
         setInDepthHelp(Locale.get(Msg.CMD_HELP_MANAGE_REMOVE).toArray());
+
+        this.runnableFactory = plugin.getRunnableFactory();
     }
 
     @Override
@@ -43,7 +48,7 @@ public class ManageRemoveCommand extends CommandNode {
     }
 
     private void runRemoveTask(String playerName, ISender sender, String[] args) {
-        RunnableFactory.createNew(new AbsRunnable("DBRemoveTask " + playerName) {
+        runnableFactory.createNew(playerName + ", Database Remove", new AbsRunnable() {
             @Override
             public void run() {
                 try {

@@ -30,8 +30,8 @@ public class WebUserCommand extends TreeCmdNode {
                         register,
                         new WebLevelCommand(plugin),
                         new WebListUsersCommand(plugin),
-                        new WebCheckCommand(),
-                        new WebDeleteCommand()
+                        new WebCheckCommand(plugin),
+                        new WebDeleteCommand(plugin)
                 }
         );
     }

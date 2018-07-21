@@ -18,12 +18,11 @@ import com.djrapitops.plan.system.settings.locale.Msg;
 import com.djrapitops.plan.utilities.MiscUtils;
 import com.djrapitops.plan.utilities.uuid.UUIDUtility;
 import com.djrapitops.plugin.api.utility.log.Log;
+import com.djrapitops.plugin.command.ColorScheme;
 import com.djrapitops.plugin.command.CommandNode;
 import com.djrapitops.plugin.command.CommandType;
 import com.djrapitops.plugin.command.ISender;
-import com.djrapitops.plugin.settings.ColorScheme;
 import com.djrapitops.plugin.task.AbsRunnable;
-import com.djrapitops.plugin.task.RunnableFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +61,7 @@ public class QInspectCommand extends CommandNode {
     }
 
     private void runInspectTask(String playerName, ISender sender) {
-        RunnableFactory.createNew(new AbsRunnable("InspectTask") {
+        plugin.getRunnableFactory().createNew("Quick Inspect", new AbsRunnable() {
             @Override
             public void run() {
                 try {

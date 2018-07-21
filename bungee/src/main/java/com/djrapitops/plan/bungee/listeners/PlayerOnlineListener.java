@@ -2,14 +2,19 @@
  * License is provided in the jar as LICENSE also here:
  * https://github.com/Rsl1122/Plan-PlayerAnalytics/blob/master/Plan/src/main/resources/LICENSE
  */
-package com.djrapitops.plan.bungee.listeners.bungee;
+package com.djrapitops.plan.bungee.listeners;
 
 import com.djrapitops.plan.data.container.Session;
 import com.djrapitops.plan.system.cache.SessionCache;
+import com.djrapitops.plan.system.info.InfoSystem;
+import com.djrapitops.plan.system.info.connection.WebExceptionLogger;
 import com.djrapitops.plan.system.processing.Processing;
 import com.djrapitops.plan.system.processing.processors.player.BungeePlayerRegisterProcessor;
 import com.djrapitops.plan.system.processing.processors.player.IPUpdateProcessor;
+import com.djrapitops.plugin.api.TimeAmount;
 import com.djrapitops.plugin.api.utility.log.Log;
+import com.djrapitops.plugin.task.AbsRunnable;
+import com.djrapitops.plugin.task.RunnableFactory;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerDisconnectEvent;
@@ -27,6 +32,12 @@ import java.util.UUID;
  */
 public class PlayerOnlineListener implements Listener {
 
+    private final RunnableFactory runnableFactory;
+
+    public PlayerOnlineListener(RunnableFactory runnableFactory) {
+        this.runnableFactory = runnableFactory;
+    }
+
     @EventHandler
     public void onPostLogin(PostLoginEvent event) {
         try {
@@ -41,9 +52,26 @@ public class PlayerOnlineListener implements Listener {
             Processing.submit(new BungeePlayerRegisterProcessor(uuid, name, now,
                     new IPUpdateProcessor(uuid, address, now))
             );
+
+            updatePlayerPage(uuid);
         } catch (Exception e) {
             Log.toLog(this.getClass(), e);
         }
+    }
+
+    private void updatePlayerPage(UUID uuid) {
+        runnableFactory.createNew("Generate Inspect page: " + uuid, new AbsRunnable() {
+            @Override
+            public void run() {
+                try {
+                    WebExceptionLogger.logIfOccurs(PlayerOnlineListener.class,
+                            () -> InfoSystem.getInstance().generateAndCachePlayerPage(uuid)
+                    );
+                } finally {
+                    cancel();
+                }
+            }
+        }).runTaskLaterAsynchronously(TimeAmount.SECOND.ticks() * 20);
     }
 
     @EventHandler

@@ -1,5 +1,6 @@
 package com.djrapitops.plan.command.commands.manage;
 
+import com.djrapitops.plan.PlanPlugin;
 import com.djrapitops.plan.api.exceptions.database.DBException;
 import com.djrapitops.plan.api.exceptions.database.DBInitException;
 import com.djrapitops.plan.data.store.mutators.formatting.Formatters;
@@ -29,11 +30,14 @@ import java.util.UUID;
  */
 public class ManageBackupCommand extends CommandNode {
 
-    public ManageBackupCommand() {
+    private final RunnableFactory runnableFactory;
+
+    public ManageBackupCommand(PlanPlugin plugin) {
         super("backup", Permissions.MANAGE.getPermission(), CommandType.CONSOLE);
         setShortHelp(Locale.get(Msg.CMD_USG_MANAGE_BACKUP).toString());
         setArguments("<DB>");
 
+        this.runnableFactory = plugin.getRunnableFactory();
     }
 
     @Override
@@ -59,7 +63,7 @@ public class ManageBackupCommand extends CommandNode {
     }
 
     private void runBackupTask(ISender sender, String[] args, Database database) {
-        RunnableFactory.createNew(new AbsRunnable("BackupTask") {
+        runnableFactory.createNew("Backup", new AbsRunnable() {
             @Override
             public void run() {
                 try {
@@ -89,7 +93,7 @@ public class ManageBackupCommand extends CommandNode {
         try {
             String timeStamp = Formatters.iso8601NoClock().apply(System::currentTimeMillis);
             String fileName = dbName + "-backup-" + timeStamp;
-            backupDB = new SQLiteDB(fileName);
+            backupDB = new SQLiteDB(fileName, runnableFactory);
             Collection<UUID> uuids = copyFromDB.fetch().getSavedUUIDs();
             if (uuids.isEmpty()) {
                 return;

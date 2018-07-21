@@ -34,7 +34,7 @@ public abstract class SpecificExport extends AbsRunnable {
     protected final boolean usingBungee;
 
     protected SpecificExport(String taskName) {
-        super(taskName);
+        super();
         outputFolder = getFolder();
         usingBungee = Check.isBungeeAvailable();
     }

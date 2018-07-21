@@ -5,11 +5,10 @@
 package com.djrapitops.plan.system.tasks;
 
 import com.djrapitops.plan.PlanHelper;
-import com.djrapitops.plan.system.PlanSystem;
 import com.djrapitops.plan.system.SubSystem;
 import com.djrapitops.plugin.api.systems.TaskCenter;
 import com.djrapitops.plugin.task.AbsRunnable;
-import com.djrapitops.plugin.task.IRunnable;
+import com.djrapitops.plugin.task.PluginRunnable;
 import com.djrapitops.plugin.task.RunnableFactory;
 
 /**
@@ -21,23 +20,16 @@ import com.djrapitops.plugin.task.RunnableFactory;
  */
 public abstract class TaskSystem implements SubSystem {
 
+    protected final RunnableFactory runnableFactory;
     protected TPSCountTimer tpsCountTimer;
 
-    public TaskSystem(TPSCountTimer tpsCountTimer) {
+    public TaskSystem(RunnableFactory runnableFactory, TPSCountTimer tpsCountTimer) {
+        this.runnableFactory = runnableFactory;
         this.tpsCountTimer = tpsCountTimer;
     }
 
-    public static TaskSystem getInstance() {
-        return PlanSystem.getInstance().getTaskSystem();
-    }
-
-    protected IRunnable registerTask(AbsRunnable runnable) {
-        String taskName = runnable.getName();
-        return registerTask(taskName != null ? taskName : runnable.getClass().getSimpleName(), runnable);
-    }
-
-    protected IRunnable registerTask(String name, AbsRunnable runnable) {
-        return RunnableFactory.createNew(name, runnable);
+    protected PluginRunnable registerTask(String name, AbsRunnable runnable) {
+        return runnableFactory.createNew(name, runnable);
     }
 
     @Override

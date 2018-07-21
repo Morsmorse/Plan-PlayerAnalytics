@@ -90,14 +90,6 @@
             <version>1.12.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-
-        <!--TEMPORARY DEPENDENCY-->
-        <dependency>
-            <groupId>org.spongepowered</groupId>
-            <artifactId>spongeapi</artifactId>
-            <version>LATEST</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
 </project>

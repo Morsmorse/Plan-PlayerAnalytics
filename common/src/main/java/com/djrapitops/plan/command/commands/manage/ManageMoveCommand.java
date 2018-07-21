@@ -1,5 +1,6 @@
 package com.djrapitops.plan.command.commands.manage;
 
+import com.djrapitops.plan.PlanPlugin;
 import com.djrapitops.plan.system.database.DBSystem;
 import com.djrapitops.plan.system.database.databases.Database;
 import com.djrapitops.plan.system.settings.Permissions;
@@ -25,10 +26,14 @@ import java.util.Arrays;
  */
 public class ManageMoveCommand extends CommandNode {
 
-    public ManageMoveCommand() {
+    private final RunnableFactory runnableFactory;
+
+    public ManageMoveCommand(PlanPlugin plugin) {
         super("move", Permissions.MANAGE.getPermission(), CommandType.PLAYER_OR_ARGS);
         setShortHelp(Locale.get(Msg.CMD_USG_MANAGE_MOVE).toString());
         setArguments("<fromDB>", "<toDB>", "[-a]");
+
+        runnableFactory = plugin.getRunnableFactory();
     }
 
     @Override
@@ -64,8 +69,8 @@ public class ManageMoveCommand extends CommandNode {
         }
     }
 
-    private void runMoveTask(final Database fromDatabase, final Database toDatabase, ISender sender) {
-        RunnableFactory.createNew(new AbsRunnable("DBMoveTask") {
+    private void runMoveTask(Database fromDatabase, Database toDatabase, ISender sender) {
+        runnableFactory.createNew("Database Move", new AbsRunnable() {
             @Override
             public void run() {
                 try {

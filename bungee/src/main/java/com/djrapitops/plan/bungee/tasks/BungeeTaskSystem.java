@@ -5,8 +5,6 @@
 package com.djrapitops.plan.bungee.tasks;
 
 import com.djrapitops.plan.bungee.PlanBungee;
-import com.djrapitops.plan.bungee.tasks.bungee.BungeeTPSCountTimer;
-import com.djrapitops.plan.bungee.tasks.bungee.EnableConnectionTask;
 import com.djrapitops.plan.system.settings.Settings;
 import com.djrapitops.plan.system.tasks.TaskSystem;
 import com.djrapitops.plan.system.tasks.server.NetworkPageRefreshTask;
@@ -23,7 +21,7 @@ public class BungeeTaskSystem extends TaskSystem {
     private final PlanBungee plugin;
 
     public BungeeTaskSystem(PlanBungee plugin) {
-        super(new BungeeTPSCountTimer(plugin));
+        super(plugin.getRunnableFactory(), new BungeeTPSCountTimer(plugin));
         this.plugin = plugin;
     }
 
@@ -33,11 +31,11 @@ public class BungeeTaskSystem extends TaskSystem {
     }
 
     private void registerTasks() {
-        registerTask(new EnableConnectionTask()).runTaskAsynchronously();
-        registerTask(tpsCountTimer).runTaskTimerAsynchronously(1000, TimeAmount.SECOND.ticks());
-        registerTask(new NetworkPageRefreshTask()).runTaskTimerAsynchronously(1500, TimeAmount.MINUTE.ticks());
+        registerTask("Enable Bungee Connector", new EnableConnectionTask()).runTaskAsynchronously();
+        registerTask("TPS Count Timer", tpsCountTimer).runTaskTimerAsynchronously(1000, TimeAmount.SECOND.ticks());
+        registerTask("Network Page Update", new NetworkPageRefreshTask()).runTaskTimerAsynchronously(1500, TimeAmount.MINUTE.ticks());
         if (Settings.ANALYSIS_EXPORT.isTrue()) {
-            registerTask(new HtmlExport(plugin)).runTaskAsynchronously();
+            registerTask("Html Export", new HtmlExport(plugin)).runTaskAsynchronously();
         }
     }
 }

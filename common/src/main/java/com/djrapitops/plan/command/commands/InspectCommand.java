@@ -1,5 +1,6 @@
 package com.djrapitops.plan.command.commands;
 
+import com.djrapitops.plan.PlanPlugin;
 import com.djrapitops.plan.api.exceptions.database.DBOpException;
 import com.djrapitops.plan.system.database.databases.Database;
 import com.djrapitops.plan.system.processing.Processing;
@@ -28,11 +29,15 @@ import java.util.UUID;
  */
 public class InspectCommand extends CommandNode {
 
-    public InspectCommand() {
+    private final RunnableFactory runnableFactory;
+
+    public InspectCommand(PlanPlugin plugin) {
         super("inspect", Permissions.INSPECT.getPermission(), CommandType.PLAYER_OR_ARGS);
         setArguments("<player>");
         setShortHelp(Locale.get(Msg.CMD_USG_INSPECT).toString());
         setInDepthHelp(Locale.get(Msg.CMD_HELP_INSPECT).toArray());
+
+        this.runnableFactory = plugin.getRunnableFactory();
     }
 
     @Override
@@ -43,7 +48,7 @@ public class InspectCommand extends CommandNode {
     }
 
     private void runInspectTask(String playerName, ISender sender) {
-        RunnableFactory.createNew(new AbsRunnable("InspectTask") {
+        runnableFactory.createNew("Inspect", new AbsRunnable() {
             @Override
             public void run() {
                 try {

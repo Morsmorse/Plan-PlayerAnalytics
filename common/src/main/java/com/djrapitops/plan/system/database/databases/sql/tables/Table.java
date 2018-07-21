@@ -5,10 +5,7 @@ import com.djrapitops.plan.api.exceptions.database.DBOpException;
 import com.djrapitops.plan.system.database.databases.sql.SQLDB;
 import com.djrapitops.plan.system.database.databases.sql.processing.ExecStatement;
 import com.djrapitops.plan.system.database.databases.sql.processing.QueryStatement;
-import com.djrapitops.plan.system.settings.Settings;
 import com.djrapitops.plan.utilities.MiscUtils;
-import com.djrapitops.plugin.api.utility.log.Log;
-import com.djrapitops.plugin.utilities.Verify;
 import com.google.common.base.Objects;
 
 import java.sql.Connection;
@@ -68,17 +65,6 @@ public abstract class Table {
     }
 
     /**
-     * Get the Database Schema version from VersionTable.
-     *
-     * @return Database Schema version.
-     * @deprecated Use db.getVersion - db is protected variable.
-     */
-    @Deprecated
-    public int getVersion() {
-        return db.getVersion();
-    }
-
-    /**
      * Executes an SQL Statement
      *
      * @param statementString Statement to execute in the database.
@@ -99,16 +85,7 @@ public abstract class Table {
      * @param statements SQL statements to setUp
      */
     protected void executeUnsafe(String... statements) {
-        Verify.nullCheck(statements);
-        for (String statement : statements) {
-            try {
-                execute(statement);
-            } catch (DBOpException e) {
-                if (Settings.DEV_MODE.isTrue()) {
-                    Log.toLog(this.getClass(), e);
-                }
-            }
-        }
+        db.executeUnsafe(statements);
     }
 
     /**

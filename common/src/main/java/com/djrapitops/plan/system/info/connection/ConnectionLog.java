@@ -53,6 +53,7 @@ public class ConnectionLog {
         log.put(address, requestMap);
     }
 
+    @Deprecated
     private static ConnectionLog getInstance() {
         return ConnectionSystem.getInstance().getConnectionLog();
     }

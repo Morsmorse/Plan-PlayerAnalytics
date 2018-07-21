@@ -23,6 +23,7 @@ public class WebServerSystem implements SubSystem {
         webServer = new WebServer();
     }
 
+    @Deprecated
     public static WebServerSystem getInstance() {
         return PlanSystem.getInstance().getWebServerSystem();
     }

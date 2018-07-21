@@ -3,6 +3,7 @@ package com.djrapitops.plan.system.database.databases.sql;
 import com.djrapitops.plan.api.exceptions.database.DBInitException;
 import com.djrapitops.plan.system.settings.Settings;
 import com.djrapitops.plugin.api.utility.log.Log;
+import com.djrapitops.plugin.task.RunnableFactory;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.sql.DataSource;
@@ -17,7 +18,8 @@ public class MySQLDB extends SQLDB {
 
     protected DataSource dataSource;
 
-    public MySQLDB() {
+    public MySQLDB(RunnableFactory runnableFactory) {
+        super(runnableFactory);
     }
 
     /**

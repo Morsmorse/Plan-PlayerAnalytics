@@ -11,7 +11,7 @@ import com.djrapitops.plugin.SpongePlugin;
 import com.djrapitops.plugin.api.Benchmark;
 import com.djrapitops.plugin.api.utility.log.DebugLog;
 import com.djrapitops.plugin.api.utility.log.Log;
-import com.djrapitops.plugin.settings.ColorScheme;
+import com.djrapitops.plugin.command.ColorScheme;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.spongepowered.api.config.ConfigDir;

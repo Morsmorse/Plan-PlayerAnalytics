@@ -4,9 +4,7 @@ import com.djrapitops.plan.data.container.Session;
 import com.djrapitops.plan.system.cache.SessionCache;
 import com.djrapitops.plan.system.processing.Processing;
 import com.djrapitops.plan.system.processing.processors.info.NetworkPageUpdateProcessor;
-import com.djrapitops.plan.system.processing.processors.info.PlayerPageUpdateProcessor;
 import com.djrapitops.plan.system.processing.processors.player.*;
-import com.djrapitops.plugin.api.systems.NotificationCenter;
 import com.djrapitops.plugin.api.utility.log.Log;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
@@ -78,7 +76,7 @@ public class SpongePlayerListener {
     private void actOnJoinEvent(ClientConnectionEvent.Join event) {
         Player player = event.getTargetEntity();
 
-        NotificationCenter.checkNotifications(player);
+        // TODO New version notification
 
         UUID uuid = player.getUniqueId();
         long time = System.currentTimeMillis();
@@ -102,9 +100,7 @@ public class SpongePlayerListener {
         Processing.submit(
                 new RegisterProcessor(uuid, time, playerName,
                         new IPUpdateProcessor(uuid, address, time),
-                        new NameProcessor(uuid, playerName, displayName),
-                        new PlayerPageUpdateProcessor(uuid)
-                )
+                        new NameProcessor(uuid, playerName, displayName))
         );
         Processing.submit(new NetworkPageUpdateProcessor());
     }
@@ -129,6 +125,5 @@ public class SpongePlayerListener {
         Processing.submit(new BanAndOpProcessor(uuid, () -> banned, false));
         Processing.submit(new EndSessionProcessor(uuid, time));
         Processing.submit(new NetworkPageUpdateProcessor());
-        Processing.submit(new PlayerPageUpdateProcessor(uuid));
     }
 }

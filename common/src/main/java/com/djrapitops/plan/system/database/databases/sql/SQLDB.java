@@ -5,16 +5,17 @@ import com.djrapitops.plan.api.exceptions.database.DBOpException;
 import com.djrapitops.plan.system.database.databases.Database;
 import com.djrapitops.plan.system.database.databases.operation.*;
 import com.djrapitops.plan.system.database.databases.sql.operation.*;
+import com.djrapitops.plan.system.database.databases.sql.patches.*;
 import com.djrapitops.plan.system.database.databases.sql.processing.ExecStatement;
 import com.djrapitops.plan.system.database.databases.sql.processing.QueryStatement;
 import com.djrapitops.plan.system.database.databases.sql.tables.*;
-import com.djrapitops.plan.system.database.databases.sql.tables.move.Version8TransferTable;
 import com.djrapitops.plan.system.settings.Settings;
 import com.djrapitops.plugin.api.TimeAmount;
 import com.djrapitops.plugin.api.utility.log.Log;
 import com.djrapitops.plugin.task.AbsRunnable;
-import com.djrapitops.plugin.task.ITask;
+import com.djrapitops.plugin.task.PluginTask;
 import com.djrapitops.plugin.task.RunnableFactory;
+import com.djrapitops.plugin.utilities.Verify;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.sql.Connection;
@@ -33,6 +34,8 @@ import java.util.stream.Collectors;
  * @since 2.0.0
  */
 public abstract class SQLDB extends Database {
+
+    protected final RunnableFactory runnableFactory;
 
     private final UsersTable usersTable;
     private final UserInfoTable userInfoTable;
@@ -60,9 +63,10 @@ public abstract class SQLDB extends Database {
     private final SQLTransferOps transferOps;
 
     private final boolean usingMySQL;
-    private ITask dbCleanTask;
+    private PluginTask dbCleanTask;
 
-    public SQLDB() {
+    public SQLDB(RunnableFactory runnableFactory) {
+        this.runnableFactory = runnableFactory;
         usingMySQL = getName().equals("MySQL");
 
         versionTable = new VersionTable(this);
@@ -112,7 +116,7 @@ public abstract class SQLDB extends Database {
 
     @Override
     public void scheduleClean(long secondsDelay) {
-        dbCleanTask = RunnableFactory.createNew("DB Clean Task", new AbsRunnable() {
+        dbCleanTask = runnableFactory.createNew("DB Clean Task", new AbsRunnable() {
             @Override
             public void run() {
                 try {
@@ -136,67 +140,40 @@ public abstract class SQLDB extends Database {
      */
     public void setupDatabase() throws DBInitException {
         try {
-            boolean newDatabase = versionTable.isNewDatabase();
-
-            versionTable.createTable();
             createTables();
 
-            if (newDatabase) {
-                Log.info("New Database created.");
-                versionTable.setVersion(19);
-            }
+            Patch[] patches = new Patch[]{
+                    new Version10Patch(this),
+                    new GeoInfoLastUsedPatch(this),
+                    new TransferPartitionPatch(this),
+                    new SessionAFKTimePatch(this),
+                    new KillsServerIDPatch(this),
+                    new WorldTimesSeverIDPatch(this),
+                    new WorldsServerIDPatch(this),
+                    new IPHashPatch(this),
+                    new IPAnonymizationPatch(this),
+                    new NicknameLastSeenPatch(this),
+                    new VersionTableRemovalPatch(this)
+            };
 
-            int version = versionTable.getVersion();
-
-            final SQLDB db = this;
-            if (version < 10) {
-                RunnableFactory.createNew("DB v8 -> v10 Task", new AbsRunnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            new Version8TransferTable(db).alterTablesToV10();
-                        } catch (DBInitException | DBOpException e) {
-                            Log.toLog(this.getClass(), e);
+            runnableFactory.createNew("Database Patch", new AbsRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        for (Patch patch : patches) {
+                            if (!patch.hasBeenApplied()) {
+                                String patchName = patch.getClass().getSimpleName();
+                                Log.info("Applying Patch: " + patchName);
+                                patch.apply();
+                                Log.info("Applied Patch:  " + patchName);
+                            }
                         }
+                        Log.info("All database patches applied successfully.");
+                    } catch (Exception e) {
+                        // TODO Critical exception, disable plugin
                     }
-                }).runTaskLaterAsynchronously(TimeAmount.SECOND.ticks() * 5L);
-            }
-            if (version < 11) {
-                serverTable.alterTableV11();
-                versionTable.setVersion(11);
-            }
-            if (version < 12) {
-                geoInfoTable.alterTableV12();
-                versionTable.setVersion(12);
-            }
-            if (version < 13) {
-                geoInfoTable.alterTableV13();
-                versionTable.setVersion(13);
-            }
-            if (version < 14) {
-                transferTable.alterTableV14();
-                versionTable.setVersion(14);
-            }
-            if (version < 15) {
-                sessionsTable.alterTableV15();
-                versionTable.setVersion(15);
-            }
-            if (version < 16) {
-                killsTable.alterTableV16();
-                worldTimesTable.alterTableV16();
-                versionTable.setVersion(16);
-            }
-            if (version < 17) {
-                geoInfoTable.alterTableV17();
-                versionTable.setVersion(17);
-            }
-            if (version < 18) {
-                geoInfoTable.alterTableV18();
-                // version set in the runnable in above method
-            }
-            if (version < 19) {
-                nicknamesTable.alterTableV19();
-            }
+                }
+            }).runTaskLaterAsynchronously(TimeAmount.SECOND.ticks() * 5L);
         } catch (DBOpException e) {
             throw new DBInitException("Failed to set-up Database", e);
         }
@@ -254,18 +231,9 @@ public abstract class SQLDB extends Database {
         }
     }
 
-    public int getVersion() {
-        return versionTable.getVersion();
-    }
-
-    public void setVersion(int version) {
-        versionTable.setVersion(version);
-    }
-
     private void clean() {
         tpsTable.clean();
         transferTable.clean();
-        geoInfoTable.clean();
         pingTable.clean();
 
         long now = System.currentTimeMillis();
@@ -355,6 +323,24 @@ public abstract class SQLDB extends Database {
             throw DBOpException.forCause(statement.getSql(), e);
         } finally {
             commit(connection);
+        }
+    }
+
+    public void executeUnsafe(String... statements) {
+        Verify.nullCheck(statements);
+        for (String statement : statements) {
+            try {
+                execute(new ExecStatement(statement) {
+                    @Override
+                    public void prepare(PreparedStatement statement) {
+                        /* No Preparation */
+                    }
+                });
+            } catch (DBOpException e) {
+                if (Settings.DEV_MODE.isTrue()) {
+                    Log.toLog(this.getClass(), e);
+                }
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.djrapitops.plan.command.commands.webuser;
 
+import com.djrapitops.plan.PlanPlugin;
 import com.djrapitops.plan.data.WebUser;
 import com.djrapitops.plan.system.database.databases.Database;
 import com.djrapitops.plan.system.settings.Permissions;
@@ -22,11 +23,14 @@ import java.util.Arrays;
  * @since 3.5.2
  */
 public class WebCheckCommand extends CommandNode {
+    private final RunnableFactory runnableFactory;
 
-    public WebCheckCommand() {
+    public WebCheckCommand(PlanPlugin plugin) {
         super("check", Permissions.MANAGE_WEB.getPerm(), CommandType.PLAYER_OR_ARGS);
         setShortHelp(Locale.get(Msg.CMD_USG_WEB_CHECK).toString());
         setArguments("<username>");
+
+        this.runnableFactory = plugin.getRunnableFactory();
     }
 
     @Override
@@ -37,7 +41,7 @@ public class WebCheckCommand extends CommandNode {
         Database database = Database.getActive();
         String user = args[0];
 
-        RunnableFactory.createNew(new AbsRunnable("Webuser Check Task: " + user) {
+        runnableFactory.createNew("Web user " + user + " Check", new AbsRunnable() {
             @Override
             public void run() {
                 try {

@@ -20,7 +20,7 @@ public class LogsFolderCleanTask extends AbsRunnable {
     private final File folder;
 
     public LogsFolderCleanTask(File folder) {
-        super(LogsFolderCleanTask.class.getSimpleName());
+        super();
         this.folder = folder;
     }
 

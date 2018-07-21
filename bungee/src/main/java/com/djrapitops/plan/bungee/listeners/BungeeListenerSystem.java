@@ -1,7 +1,6 @@
 package com.djrapitops.plan.bungee.listeners;
 
 import com.djrapitops.plan.bungee.PlanBungee;
-import com.djrapitops.plan.bungee.listeners.bungee.PlayerOnlineListener;
 import com.djrapitops.plan.system.listeners.ListenerSystem;
 
 public class BungeeListenerSystem extends ListenerSystem {
@@ -14,7 +13,7 @@ public class BungeeListenerSystem extends ListenerSystem {
 
     @Override
     protected void registerListeners() {
-        plugin.registerListener(new PlayerOnlineListener());
+        plugin.registerListener(new PlayerOnlineListener(plugin.getRunnableFactory()));
     }
 
     @Override

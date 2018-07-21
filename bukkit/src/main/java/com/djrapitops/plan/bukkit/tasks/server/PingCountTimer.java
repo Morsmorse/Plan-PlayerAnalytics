@@ -87,7 +87,14 @@ public class PingCountTimer extends AbsRunnable implements Listener {
         pingField = localPing;
     }
 
-    private final Map<UUID, List<DateObj<Integer>>> playerHistory = new HashMap<>();
+    private final RunnableFactory runnableFactory;
+    private final Map<UUID, List<DateObj<Integer>>> playerHistory;
+
+    public PingCountTimer(RunnableFactory runnableFactory) {
+        this.runnableFactory = runnableFactory;
+        playerHistory = new HashMap<>();
+    }
+
 
     private static boolean isPingMethodAvailable() {
         try {
@@ -153,7 +160,7 @@ public class PingCountTimer extends AbsRunnable implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent joinEvent) {
         Player player = joinEvent.getPlayer();
-        RunnableFactory.createNew("Add Player to Ping list", new AbsRunnable() {
+        runnableFactory.createNew("Add Player to Ping list", new AbsRunnable() {
             @Override
             public void run() {
                 if (player.isOnline()) {

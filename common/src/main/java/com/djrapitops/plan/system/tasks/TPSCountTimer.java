@@ -23,7 +23,6 @@ public abstract class TPSCountTimer<T extends PlanPlugin> extends AbsRunnable {
     protected int latestPlayersOnline = 0;
 
     public TPSCountTimer(T plugin) {
-        super("TPSCountTimer");
         this.plugin = plugin;
         history = new ArrayList<>();
     }

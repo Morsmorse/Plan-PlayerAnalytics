@@ -1,5 +1,6 @@
 package com.djrapitops.plan.command.commands;
 
+import com.djrapitops.plan.PlanPlugin;
 import com.djrapitops.plan.api.exceptions.database.DBOpException;
 import com.djrapitops.plan.system.settings.Permissions;
 import com.djrapitops.plan.system.settings.locale.Locale;
@@ -25,11 +26,15 @@ import java.util.List;
  */
 public class SearchCommand extends CommandNode {
 
-    public SearchCommand() {
+    private final RunnableFactory runnableFactory;
+
+    public SearchCommand(PlanPlugin plugin) {
         super("search", Permissions.SEARCH.getPermission(), CommandType.PLAYER_OR_ARGS);
         setShortHelp(Locale.get(Msg.CMD_USG_SEARCH).toString());
         setArguments("<text>");
         setInDepthHelp(Locale.get(Msg.CMD_HELP_SEARCH).toArray());
+
+        this.runnableFactory = plugin.getRunnableFactory();
     }
 
     @Override
@@ -42,7 +47,7 @@ public class SearchCommand extends CommandNode {
     }
 
     private void runSearchTask(String[] args, ISender sender) {
-        RunnableFactory.createNew(new AbsRunnable("SearchTask: " + Arrays.toString(args)) {
+        runnableFactory.createNew(Arrays.toString(args) + " Search", new AbsRunnable() {
             @Override
             public void run() {
                 try {

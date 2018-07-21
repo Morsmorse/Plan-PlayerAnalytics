@@ -1,5 +1,6 @@
 package com.djrapitops.plan.command.commands.webuser;
 
+import com.djrapitops.plan.PlanPlugin;
 import com.djrapitops.plan.system.database.databases.Database;
 import com.djrapitops.plan.system.settings.Permissions;
 import com.djrapitops.plan.system.settings.locale.Locale;
@@ -22,10 +23,14 @@ import java.util.Arrays;
  */
 public class WebDeleteCommand extends CommandNode {
 
-    public WebDeleteCommand() {
+    private final RunnableFactory runnableFactory;
+
+    public WebDeleteCommand(PlanPlugin plugin) {
         super("delete|remove", Permissions.MANAGE_WEB.getPerm(), CommandType.PLAYER_OR_ARGS);
         setShortHelp(Locale.get(Msg.CMD_USG_WEB_DELETE).toString());
         setArguments("<username>");
+
+        this.runnableFactory = plugin.getRunnableFactory();
     }
 
     @Override
@@ -36,7 +41,7 @@ public class WebDeleteCommand extends CommandNode {
         Database database = Database.getActive();
         String user = args[0];
 
-        RunnableFactory.createNew(new AbsRunnable("Webuser Delete Task: " + user) {
+        runnableFactory.createNew("Web user " + user + " Delete", new AbsRunnable() {
             @Override
             public void run() {
                 try {

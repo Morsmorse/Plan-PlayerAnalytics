@@ -1,5 +1,6 @@
 package com.djrapitops.plan.command.commands.manage;
 
+import com.djrapitops.plan.PlanPlugin;
 import com.djrapitops.plan.system.processing.importing.ImporterManager;
 import com.djrapitops.plan.system.processing.importing.importers.Importer;
 import com.djrapitops.plan.system.settings.Permissions;
@@ -22,11 +23,15 @@ import java.util.Arrays;
  */
 public class ManageImportCommand extends CommandNode {
 
-    public ManageImportCommand() {
+    private final RunnableFactory runnableFactory;
+
+    public ManageImportCommand(PlanPlugin plugin) {
         super("import", Permissions.MANAGE.getPermission(), CommandType.CONSOLE);
         setShortHelp(Locale.get(Msg.CMD_USG_MANAGE_IMPORT).toString());
         setArguments("<plugin>/list", "[import args]");
         setInDepthHelp(Locale.get(Msg.CMD_HELP_MANAGE_IMPORT).toArray());
+
+        runnableFactory = plugin.getRunnableFactory();
     }
 
     @Override
@@ -51,7 +56,7 @@ public class ManageImportCommand extends CommandNode {
             return;
         }
 
-        RunnableFactory.createNew("Import:" + importArg, new AbsRunnable() {
+        runnableFactory.createNew("Import:" + importArg, new AbsRunnable() {
             @Override
             public void run() {
                 try {

@@ -10,7 +10,6 @@ import com.djrapitops.plan.bukkit.tasks.server.PaperTPSCountTimer;
 import com.djrapitops.plan.bukkit.tasks.server.PingCountTimer;
 import com.djrapitops.plan.system.tasks.ServerTaskSystem;
 import com.djrapitops.plugin.api.Check;
-import com.djrapitops.plugin.task.RunnableFactory;
 import org.bukkit.Bukkit;
 
 /**
@@ -31,9 +30,9 @@ public class BukkitTaskSystem extends ServerTaskSystem {
     @Override
     public void enable() {
         super.enable();
-        PingCountTimer pingCountTimer = new PingCountTimer();
+        PingCountTimer pingCountTimer = new PingCountTimer(runnableFactory);
         ((PlanBukkit) plugin).registerListener(pingCountTimer);
-        RunnableFactory.createNew("PingCountTimer", pingCountTimer)
+        runnableFactory.createNew("Ping Count Timer", pingCountTimer)
                 .runTaskTimer(20L, PingCountTimer.PING_INTERVAL);
     }
 

@@ -12,8 +12,7 @@ import com.djrapitops.plan.utilities.html.Html;
 import com.djrapitops.plugin.api.Benchmark;
 import com.djrapitops.plugin.api.config.Config;
 import com.djrapitops.plugin.api.utility.log.Log;
-import com.djrapitops.plugin.settings.ColorScheme;
-import com.djrapitops.plugin.settings.DefaultMessages;
+import com.djrapitops.plugin.command.ColorScheme;
 import com.djrapitops.plugin.utilities.Verify;
 
 import java.io.File;
@@ -43,6 +42,7 @@ public class Locale {
         messages = new EnumMap<>(Msg.class);
     }
 
+    @Deprecated
     public static Locale getInstance() {
         Locale locale = ConfigSystem.getInstance().getLocale();
         Verify.nullCheck(locale, () -> new IllegalStateException("Locale has not been initialized."));
@@ -116,7 +116,7 @@ public class Locale {
         String green = "§a";
         String yellow = "§e";
         String red = "§c";
-        String arrowsRight = DefaultMessages.ARROWS_RIGHT.parse();
+        String arrowsRight = ">";
         ColorScheme cs = PlanHelper.getInstance().getColorScheme();
         String mCol = cs.getMainColor();
         String sCol = cs.getSecondaryColor();

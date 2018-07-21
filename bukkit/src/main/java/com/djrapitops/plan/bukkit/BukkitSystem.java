@@ -38,7 +38,7 @@ public class BukkitSystem extends PlanSystem implements ServerSystem {
         versionCheckSystem = new VersionCheckSystem(plugin.getVersion());
         fileSystem = new FileSystem(plugin);
         configSystem = new ServerConfigSystem();
-        databaseSystem = new BukkitDatabaseSystem();
+        databaseSystem = new BukkitDatabaseSystem(plugin);
         listenerSystem = new BukkitListenerSystem(plugin);
         taskSystem = new BukkitTaskSystem(plugin);
 

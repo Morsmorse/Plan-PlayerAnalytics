@@ -8,7 +8,6 @@ import com.djrapitops.plan.api.exceptions.database.DBInitException;
 import com.djrapitops.plan.system.database.databases.sql.SQLDB;
 import com.djrapitops.plan.system.database.databases.sql.tables.*;
 import com.djrapitops.plan.system.info.server.ServerInfo;
-import com.djrapitops.plugin.api.Benchmark;
 
 import java.util.Optional;
 
@@ -33,7 +32,6 @@ public class Version8TransferTable extends TransferTable {
     }
 
     public void alterTablesToV10() throws DBInitException {
-        Benchmark.start("Schema copy from 8 to 10");
         copyCommandUsage();
 
         copyTPS();
@@ -52,9 +50,6 @@ public class Version8TransferTable extends TransferTable {
         dropTable("temp_nicks");
         dropTable("temp_kills");
         dropTable("temp_users");
-
-        db.setVersion(10);
-        Benchmark.stop("Schema copy from 8 to 10");
     }
 
     private void copyUsers() throws DBInitException {

@@ -38,7 +38,7 @@ public class BungeeSystem extends PlanSystem {
         versionCheckSystem = new VersionCheckSystem(plugin.getVersion());
         fileSystem = new FileSystem(plugin);
         configSystem = new BungeeConfigSystem();
-        databaseSystem = new BungeeDBSystem();
+        databaseSystem = new BungeeDBSystem(plugin);
         cacheSystem = new BungeeCacheSystem(this);
         listenerSystem = new BungeeListenerSystem(plugin);
         taskSystem = new BungeeTaskSystem(plugin);

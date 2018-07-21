@@ -1,5 +1,6 @@
 package com.djrapitops.plan.command.commands;
 
+import com.djrapitops.plan.PlanPlugin;
 import com.djrapitops.plan.api.exceptions.connection.*;
 import com.djrapitops.plan.api.exceptions.database.DBOpException;
 import com.djrapitops.plan.command.commands.manage.ManageConDebugCommand;
@@ -35,7 +36,9 @@ import java.util.UUID;
  */
 public class UpdateCommand extends CommandNode {
 
-    public UpdateCommand() {
+    RunnableFactory runnableFactory;
+
+    public UpdateCommand(PlanPlugin plugin) {
         super("update", Permissions.MANAGE.getPermission(), CommandType.ALL);
         setArguments("[-u]/[cancel]");
         setShortHelp("Get change log link or update plugin.");
@@ -46,6 +49,8 @@ public class UpdateCommand extends CommandNode {
                 "  /plan update -u - Schedule update to happen on all network servers that are online next time they reboot.",
                 "  /plan update cancel - Cancel scheduled update on servers that haven't rebooted yet."
         );
+
+        this.runnableFactory = plugin.getRunnableFactory();
     }
 
     @Override
@@ -79,7 +84,7 @@ public class UpdateCommand extends CommandNode {
         }
 
         String firstArgument = args[0];
-        RunnableFactory.createNew("Update Command Task", new AbsRunnable() {
+        runnableFactory.createNew("Update Command", new AbsRunnable() {
             @Override
             public void run() {
                 try {

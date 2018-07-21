@@ -42,7 +42,7 @@ public class SpongeSystem extends PlanSystem implements ServerSystem {
         versionCheckSystem = new VersionCheckSystem(plugin.getVersion());
         fileSystem = new FileSystem(plugin);
         configSystem = new SpongeConfigSystem();
-        databaseSystem = new SpongeDatabaseSystem();
+        databaseSystem = new SpongeDatabaseSystem(plugin);
         listenerSystem = new SpongeListenerSystem(plugin);
         taskSystem = new SpongeTaskSystem(plugin);
 

@@ -25,6 +25,7 @@ public class HookHandler implements SubSystem {
         additionalDataSources = new ArrayList<>();
     }
 
+    @Deprecated
     public static HookHandler getInstance() {
         HookHandler hookHandler = PlanSystem.getInstance().getHookHandler();
         Verify.nullCheck(hookHandler, () -> new IllegalStateException("Plugin Hooks were not initialized."));

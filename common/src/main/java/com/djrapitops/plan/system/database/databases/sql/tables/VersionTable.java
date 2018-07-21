@@ -50,7 +50,6 @@ public class VersionTable extends Table {
     /**
      * @return @throws SQLException
      */
-    @Override
     public int getVersion() {
         String sql = "SELECT * FROM " + tableName;
 

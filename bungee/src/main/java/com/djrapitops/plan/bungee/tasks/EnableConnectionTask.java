@@ -1,4 +1,4 @@
-package com.djrapitops.plan.bungee.tasks.bungee;
+package com.djrapitops.plan.bungee.tasks;
 
 import com.djrapitops.plan.api.exceptions.connection.NoServersException;
 import com.djrapitops.plan.system.info.connection.ConnectionSystem;
@@ -9,7 +9,7 @@ import com.djrapitops.plugin.task.AbsRunnable;
 public class EnableConnectionTask extends AbsRunnable {
 
     public EnableConnectionTask() {
-        super(EnableConnectionTask.class.getSimpleName());
+        super();
     }
 
     @Override

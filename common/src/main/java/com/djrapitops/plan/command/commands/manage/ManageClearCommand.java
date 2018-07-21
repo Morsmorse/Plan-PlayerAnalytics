@@ -1,5 +1,6 @@
 package com.djrapitops.plan.command.commands.manage;
 
+import com.djrapitops.plan.PlanPlugin;
 import com.djrapitops.plan.api.exceptions.database.DBInitException;
 import com.djrapitops.plan.api.exceptions.database.DBOpException;
 import com.djrapitops.plan.system.database.DBSystem;
@@ -23,12 +24,15 @@ import com.djrapitops.plugin.utilities.Verify;
  */
 public class ManageClearCommand extends CommandNode {
 
-    public ManageClearCommand() {
+    private final RunnableFactory runnableFactory;
+
+    public ManageClearCommand(PlanPlugin plugin) {
         super("clear", Permissions.MANAGE.getPermission(), CommandType.PLAYER_OR_ARGS);
         setShortHelp(Locale.get(Msg.CMD_USG_MANAGE_CLEAR).toString());
         setArguments("<DB>", "[-a]");
         setInDepthHelp(Locale.get(Msg.CMD_HELP_MANAGE_CLEAR).toArray());
 
+        runnableFactory = plugin.getRunnableFactory();
     }
 
     @Override
@@ -56,7 +60,7 @@ public class ManageClearCommand extends CommandNode {
     }
 
     private void runClearTask(ISender sender, Database database) {
-        RunnableFactory.createNew(new AbsRunnable("DBClearTask") {
+        runnableFactory.createNew("Database Clear", new AbsRunnable() {
             @Override
             public void run() {
                 try {

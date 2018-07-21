@@ -28,17 +28,20 @@ import java.util.List;
 public class FileSystem implements SubSystem {
 
     private final File dataFolder;
+    private final RunnableFactory runnableFactory;
     private File configFile;
 
     public FileSystem(PlanPlugin plugin) {
-        this(plugin.getDataFolder());
+        this(plugin.getDataFolder(), plugin.getRunnableFactory());
     }
 
-    public FileSystem(File dataFolder) {
+    public FileSystem(File dataFolder, RunnableFactory runnableFactory) {
         this.dataFolder = dataFolder;
         configFile = new File(dataFolder, "config.yml");
+        this.runnableFactory = runnableFactory;
     }
 
+    @Deprecated
     public static FileSystem getInstance() {
         FileSystem fileSystem = PlanSystem.getInstance().getFileSystem();
         Verify.nullCheck(fileSystem, () -> new IllegalStateException("File system was not initialized."));
@@ -69,7 +72,7 @@ public class FileSystem implements SubSystem {
             Verify.isTrue((configFile.exists() && configFile.isFile()) || configFile.createNewFile(),
                     () -> new EnableException("Could not create config file at " + configFile.getAbsolutePath()));
 
-            RunnableFactory.createNew(new LogsFolderCleanTask(Log.getLogsFolder()))
+            runnableFactory.createNew("Log Folder Cleanup", new LogsFolderCleanTask(Log.getLogsFolder()))
                     .runTaskLaterAsynchronously(TimeAmount.SECOND.ticks() * 30L);
         } catch (IOException e) {
             throw new EnableException("Failed to create config.yml", e);

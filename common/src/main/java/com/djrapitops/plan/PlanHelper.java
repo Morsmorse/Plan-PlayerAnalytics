@@ -3,6 +3,7 @@ package com.djrapitops.plan;
 /**
  * Really dirty temporary hack.
  */
+@Deprecated
 public class PlanHelper {
     private static PlanPlugin instance;
 

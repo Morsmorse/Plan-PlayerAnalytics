@@ -36,6 +36,7 @@ public abstract class ConnectionSystem implements SubSystem {
         connectionLog = new ConnectionLog();
     }
 
+    @Deprecated
     public static ConnectionSystem getInstance() {
         ConnectionSystem connectionSystem = InfoSystem.getInstance().getConnectionSystem();
         Verify.nullCheck(connectionSystem, () -> new IllegalStateException("Connection System was not initialized"));

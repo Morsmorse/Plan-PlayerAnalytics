@@ -1,5 +1,6 @@
 package com.djrapitops.plan.command.commands;
 
+import com.djrapitops.plan.PlanPlugin;
 import com.djrapitops.plan.data.WebUser;
 import com.djrapitops.plan.system.database.databases.Database;
 import com.djrapitops.plan.system.settings.Permissions;
@@ -31,10 +32,12 @@ import java.util.Arrays;
  */
 public class RegisterCommand extends CommandNode {
 
+    private final RunnableFactory runnableFactory;
+    
     private final String notEnoughArgsMsg;
     private final String hashErrorMsg;
 
-    public RegisterCommand() {
+    public RegisterCommand(PlanPlugin plugin) {
         // No Permission Requirement
         super("register", "", CommandType.PLAYER_OR_ARGS);
         setShortHelp(Locale.get(Msg.CMD_USG_WEB_REGISTER).toString());
@@ -46,6 +49,7 @@ public class RegisterCommand extends CommandNode {
 
         notEnoughArgsMsg = Locale.get(Msg.CMD_FAIL_REQ_ARGS).parse("(3) " + Arrays.toString(getArguments()));
         hashErrorMsg = "§cPassword hash error.";
+        runnableFactory = plugin.getRunnableFactory();
     }
 
     @Override
@@ -107,7 +111,7 @@ public class RegisterCommand extends CommandNode {
     }
 
     private void registerUser(WebUser webUser, ISender sender) {
-        RunnableFactory.createNew(new AbsRunnable("Register WebUser Task") {
+        runnableFactory.createNew("Register WebUser", new AbsRunnable() {
             @Override
             public void run() {
                 final String existsMsg = "§cUser Already Exists!";

@@ -5,9 +5,7 @@ import com.djrapitops.plan.data.container.Session;
 import com.djrapitops.plan.system.cache.SessionCache;
 import com.djrapitops.plan.system.processing.Processing;
 import com.djrapitops.plan.system.processing.processors.info.NetworkPageUpdateProcessor;
-import com.djrapitops.plan.system.processing.processors.info.PlayerPageUpdateProcessor;
 import com.djrapitops.plan.system.processing.processors.player.*;
-import com.djrapitops.plugin.api.systems.NotificationCenter;
 import com.djrapitops.plugin.api.utility.log.Log;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -79,7 +77,7 @@ public class PlayerOnlineListener implements Listener {
 
     private void actOnJoinEvent(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        NotificationCenter.checkNotifications(player);
+        // TODO New version notification
 
         UUID uuid = player.getUniqueId();
         long time = System.currentTimeMillis();
@@ -99,8 +97,7 @@ public class PlayerOnlineListener implements Listener {
         Processing.submit(
                 new RegisterProcessor(uuid, player.getFirstPlayed(), playerName,
                         new IPUpdateProcessor(uuid, address, time),
-                        new NameProcessor(uuid, playerName, displayName),
-                        new PlayerPageUpdateProcessor(uuid)
+                        new NameProcessor(uuid, playerName, displayName)
                 )
         );
         Processing.submit(new NetworkPageUpdateProcessor());
@@ -125,6 +122,5 @@ public class PlayerOnlineListener implements Listener {
         Processing.submit(new BanAndOpProcessor(uuid, player::isBanned, player.isOp()));
         Processing.submit(new EndSessionProcessor(uuid, time));
         Processing.submit(new NetworkPageUpdateProcessor());
-        Processing.submit(new PlayerPageUpdateProcessor(uuid));
     }
 }

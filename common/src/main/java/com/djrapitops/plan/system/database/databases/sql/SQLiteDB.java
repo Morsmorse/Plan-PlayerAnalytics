@@ -5,7 +5,7 @@ import com.djrapitops.plan.api.exceptions.database.DBInitException;
 import com.djrapitops.plan.utilities.MiscUtils;
 import com.djrapitops.plugin.api.utility.log.Log;
 import com.djrapitops.plugin.task.AbsRunnable;
-import com.djrapitops.plugin.task.ITask;
+import com.djrapitops.plugin.task.PluginTask;
 import com.djrapitops.plugin.task.RunnableFactory;
 import org.apache.commons.dbcp2.BasicDataSource;
 
@@ -18,23 +18,28 @@ import java.util.Objects;
  */
 public class SQLiteDB extends SQLDB {
 
+    private final RunnableFactory runnableFactory;
+
     private final File databaseFile;
     private final String dbName;
     private Connection connection;
-    private ITask connectionPingTask;
+    private PluginTask connectionPingTask;
 
     /**
      * Class Constructor.
+     * @param runnableFactory
      */
-    public SQLiteDB() {
-        this("database");
+    public SQLiteDB(RunnableFactory runnableFactory) {
+        this("database", runnableFactory);
     }
 
-    public SQLiteDB(String dbName) {
-        this(new File(PlanHelper.getInstance().getDataFolder(), dbName + ".db"));
+    public SQLiteDB(String dbName, RunnableFactory runnableFactory) {
+        this(runnableFactory, new File(PlanHelper.getInstance().getDataFolder(), dbName + ".db"));
     }
 
-    public SQLiteDB(File databaseFile) {
+    public SQLiteDB(RunnableFactory runnableFactory, File databaseFile) {
+        super(runnableFactory);
+        this.runnableFactory = runnableFactory;
         dbName = databaseFile.getName();
         this.databaseFile = databaseFile;
     }
@@ -81,7 +86,7 @@ public class SQLiteDB extends SQLDB {
         stopConnectionPingTask();
         try {
             // Maintains Connection.
-            connectionPingTask = RunnableFactory.createNew(new AbsRunnable("DBConnectionPingTask " + getName()) {
+            connectionPingTask = runnableFactory.createNew("SQLite Connection Upkeep", new AbsRunnable() {
                 @Override
                 public void run() {
                     Statement statement = null;

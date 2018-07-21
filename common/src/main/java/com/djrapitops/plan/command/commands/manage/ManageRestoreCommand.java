@@ -12,7 +12,6 @@ import com.djrapitops.plugin.command.CommandNode;
 import com.djrapitops.plugin.command.CommandType;
 import com.djrapitops.plugin.command.ISender;
 import com.djrapitops.plugin.task.AbsRunnable;
-import com.djrapitops.plugin.task.RunnableFactory;
 import com.djrapitops.plugin.utilities.Verify;
 
 import java.io.File;
@@ -61,7 +60,7 @@ public class ManageRestoreCommand extends CommandNode {
     }
 
     private void runRestoreTask(String[] args, ISender sender, final Database database) {
-        RunnableFactory.createNew(new AbsRunnable("RestoreTask") {
+        plugin.getRunnableFactory().createNew("Restore", new AbsRunnable() {
             @Override
             public void run() {
                 try {
@@ -79,7 +78,7 @@ public class ManageRestoreCommand extends CommandNode {
                         backupDBName = backupDBName.substring(0, backupDBName.length() - 3);
                     }
 
-                    SQLiteDB backupDB = new SQLiteDB(backupDBName);
+                    SQLiteDB backupDB = new SQLiteDB(backupDBName, plugin.getRunnableFactory());
                     backupDB.init();
 
                     sender.sendMessage(Locale.get(Msg.MANAGE_INFO_START).parse());

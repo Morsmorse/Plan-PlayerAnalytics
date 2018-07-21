@@ -33,18 +33,20 @@ public abstract class ConfigSystem implements SubSystem {
         theme = new Theme();
     }
 
+    @Deprecated
     public static ConfigSystem getInstance() {
         ConfigSystem configSystem = PlanSystem.getInstance().getConfigSystem();
         Verify.nullCheck(configSystem, () -> new IllegalStateException("Config System has not been initialized."));
         return configSystem;
     }
 
+    @Deprecated
     public static Config getConfig() {
         return getInstance().config;
     }
 
     public Theme getThemeSystem() {
-        return getInstance().theme;
+        return theme;
     }
 
     @Override

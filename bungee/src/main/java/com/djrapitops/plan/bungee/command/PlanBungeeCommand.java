@@ -9,7 +9,6 @@ import com.djrapitops.plan.system.settings.locale.Msg;
 import com.djrapitops.plugin.command.CommandNode;
 import com.djrapitops.plugin.command.CommandType;
 import com.djrapitops.plugin.command.TreeCmdNode;
-import com.djrapitops.plugin.command.defaultcmds.StatusCommand;
 
 /**
  * TreeCommand for the /plan command, and all subcommands.
@@ -33,7 +32,7 @@ public class PlanBungeeCommand extends TreeCmdNode {
         super.setColorScheme(plugin.getColorScheme());
         setInDepthHelp(Locale.get(Msg.CMD_HELP_PLAN).toArray());
 
-        RegisterCommand registerCommand = new RegisterCommand();
+        RegisterCommand registerCommand = new RegisterCommand(plugin);
         setNodeGroups(
                 new CommandNode[]{
                         new NetworkCommand(),
@@ -49,7 +48,7 @@ public class PlanBungeeCommand extends TreeCmdNode {
                         new BungeeSetupToggleCommand(),
                         new ReloadCommand(plugin),
                         new DisableCommand(plugin),
-                        new StatusCommand<>(plugin, Permissions.MANAGE.getPermission(), plugin.getColorScheme()),
+                        // TODO StatusCommand
 //                        (Settings.ALLOW_UPDATE.isTrue() ? new UpdateCommand() : null)
                 }
         );

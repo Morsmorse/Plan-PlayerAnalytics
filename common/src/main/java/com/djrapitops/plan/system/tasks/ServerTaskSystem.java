@@ -11,8 +11,7 @@ import com.djrapitops.plan.utilities.file.export.HtmlExport;
 import com.djrapitops.plugin.api.Benchmark;
 import com.djrapitops.plugin.api.TimeAmount;
 import com.djrapitops.plugin.api.utility.log.Log;
-import com.djrapitops.plugin.task.ITask;
-import com.djrapitops.plugin.task.RunnableFactory;
+import com.djrapitops.plugin.task.PluginTask;
 
 /**
  * Abstracted TaskSystem implementation for both Bukkit and Sponge.
@@ -22,10 +21,10 @@ import com.djrapitops.plugin.task.RunnableFactory;
 public class ServerTaskSystem extends TaskSystem {
 
     protected final PlanPlugin plugin;
-    protected ITask bootAnalysisTask;
+    protected PluginTask bootAnalysisTask;
 
     public ServerTaskSystem(PlanPlugin plugin, TPSCountTimer tpsCountTimer) {
-        super(tpsCountTimer);
+        super(plugin.getRunnableFactory(), tpsCountTimer);
         this.plugin = plugin;
     }
 
@@ -44,15 +43,15 @@ public class ServerTaskSystem extends TaskSystem {
 
         Log.info(Locale.get(Msg.ENABLE_BOOT_ANALYSIS_INFO).toString());
 
-        registerTask(tpsCountTimer).runTaskTimer(1000, TimeAmount.SECOND.ticks());
-        registerTask(new NetworkPageRefreshTask()).runTaskTimerAsynchronously(20L, 5L * TimeAmount.MINUTE.ticks());
-        bootAnalysisTask = registerTask(new BootAnalysisTask()).runTaskLaterAsynchronously(30L * TimeAmount.SECOND.ticks());
+        registerTask("TPS Count Timer", tpsCountTimer).runTaskTimer(1000, TimeAmount.SECOND.ticks());
+        registerTask("Network Page Update", new NetworkPageRefreshTask()).runTaskTimerAsynchronously(20L, 5L * TimeAmount.MINUTE.ticks());
+        bootAnalysisTask = registerTask("Boot Analysis", new BootAnalysisTask()).runTaskLaterAsynchronously(30L * TimeAmount.SECOND.ticks());
 
         if (analysisRefreshTaskIsEnabled) {
-            registerTask(new PeriodicAnalysisTask()).runTaskTimerAsynchronously(analysisPeriod, analysisPeriod);
+            registerTask("Periodic Analysis", new PeriodicAnalysisTask()).runTaskTimerAsynchronously(analysisPeriod, analysisPeriod);
         }
         if (Settings.ANALYSIS_EXPORT.isTrue()) {
-            RunnableFactory.createNew(new HtmlExport(plugin)).runTaskAsynchronously();
+            registerTask("Html Export", new HtmlExport(plugin)).runTaskAsynchronously();
         }
         Benchmark.stop("Enable", "Task Registration");
     }

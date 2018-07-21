@@ -11,6 +11,7 @@ import com.djrapitops.plugin.utilities.Verify;
 import java.util.List;
 import java.util.concurrent.*;
 
+// TODO Singleton
 public class Processing implements SubSystem {
 
     private final ExecutorService nonCriticalExecutor;
@@ -32,6 +33,7 @@ public class Processing implements SubSystem {
         submitNonCritical(runnable);
     }
 
+    @Deprecated
     public static void saveInstance(Object obj) {
         StaticHolder.saveInstance(obj.getClass(), PlanHelper.getInstance().getClass());
     }

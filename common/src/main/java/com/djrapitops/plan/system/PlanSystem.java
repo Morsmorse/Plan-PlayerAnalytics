@@ -30,6 +30,7 @@ import com.djrapitops.plugin.utilities.Verify;
  */
 public abstract class PlanSystem implements SubSystem {
 
+    @Deprecated
     protected static PlanSystem testSystem;
     protected final WebServerSystem webServerSystem;
     protected CacheSystem cacheSystem;
@@ -54,10 +55,12 @@ public abstract class PlanSystem implements SubSystem {
         cacheSystem = new CacheSystem(this);
     }
 
+    @Deprecated
     public static PlanSystem getInstance() {
         return testSystem;
     }
 
+    @Deprecated
     public static void setTestSystem(PlanSystem testSystem) {
         PlanSystem.testSystem = testSystem;
     }
