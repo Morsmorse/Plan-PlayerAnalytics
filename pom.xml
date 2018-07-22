@@ -13,6 +13,7 @@
         <module>bungee</module>
         <module>bukkit</module>
         <module>sponge</module>
+        <module>plugin</module>
     </modules>
 
     <name>Plan-PlayerAnalytics</name>
@@ -53,5 +54,7 @@
         <full.version>${release.version}</full.version>
         <compiler.version>3.7.0</compiler.version>
         <shade.version>3.1.0</shade.version>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
     </properties>
 </project>
