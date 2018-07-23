@@ -4,9 +4,7 @@
  */
 package com.djrapitops.plan.system.tasks;
 
-import com.djrapitops.plan.PlanHelper;
 import com.djrapitops.plan.system.SubSystem;
-import com.djrapitops.plugin.api.systems.TaskCenter;
 import com.djrapitops.plugin.task.AbsRunnable;
 import com.djrapitops.plugin.task.PluginRunnable;
 import com.djrapitops.plugin.task.RunnableFactory;
@@ -34,7 +32,7 @@ public abstract class TaskSystem implements SubSystem {
 
     @Override
     public void disable() {
-        TaskCenter.cancelAllKnownTasks(PlanHelper.getInstance().getClass());
+        runnableFactory.cancelAllKnownTasks();
     }
 
     public TPSCountTimer getTpsCountTimer() {
