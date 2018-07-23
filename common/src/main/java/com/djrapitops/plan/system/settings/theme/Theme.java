@@ -9,12 +9,14 @@ import com.djrapitops.plan.api.exceptions.EnableException;
 import com.djrapitops.plan.system.SubSystem;
 import com.djrapitops.plan.system.settings.Settings;
 import com.djrapitops.plan.system.settings.config.ConfigSystem;
-import com.djrapitops.plugin.api.utility.EnumUtility;
 import com.djrapitops.plugin.api.utility.log.Log;
 import com.djrapitops.plugin.utilities.Verify;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+
+import static com.djrapitops.plan.system.settings.theme.ThemeVal.*;
 
 /**
  * Enum that contains available themes.
@@ -83,12 +85,22 @@ public class Theme implements SubSystem {
 
     public String replaceThemeColors(String resourceString) {
         String replaced = resourceString;
-        List<ThemeVal> themeVariables = EnumUtility.getSupportedEnumValues(ThemeVal.class, "RED", "PINK", "PURPLE",
-                "DEEP_PURPLE", "INDIGO", "BLUE", "LIGHT_BLUE", "CYAN", "TEAL", "GREEN", "LIGHT_GREEN", "LIME",
-                "YELLOW", "AMBER", "ORANGE", "DEEP_ORANGE", "BROWN", "GREY", "BLUE_GREY", "BLACK", "WHITE",
-                "GRAPH_PUNCHCARD", "GRAPH_PLAYERS_ONLINE", "GRAPH_TPS_HIGH", "GRAPH_TPS_MED", "GRAPH_TPS_LOW",
-                "GRAPH_CPU", "GRAPH_RAM", "GRAPH_CHUNKS", "GRAPH_ENTITIES", "GRAPH_WORLD_PIE", "GRAPH_GM_PIE",
-                "GRAPH_ACTIVITY_PIE", "GRAPH_SERVER_PREF_PIE", "FONT_STYLESHEET", "FONT_FAMILY");
+        List<ThemeVal> themeVariables = Arrays.asList(
+                RED, PINK, PURPLE,
+                DEEP_PURPLE, INDIGO,
+                BLUE, LIGHT_BLUE, CYAN,
+                TEAL, GREEN, LIGHT_GREEN,
+                LIME, YELLOW, AMBER,
+                ORANGE, DEEP_ORANGE, BROWN,
+                GREY, BLUE_GREY, BLACK, WHITE,
+                GRAPH_PUNCHCARD, GRAPH_PLAYERS_ONLINE,
+                GRAPH_TPS_HIGH, GRAPH_TPS_MED, GRAPH_TPS_LOW,
+                GRAPH_CPU, GRAPH_RAM, GRAPH_CHUNKS, GRAPH_ENTITIES,
+                GRAPH_WORLD_PIE, GRAPH_GM_PIE,
+                GRAPH_ACTIVITY_PIE, GRAPH_SERVER_PREF_PIE,
+                GRAPH_MAX_PING, GRAPH_AVG_PING, GRAPH_MIN_PING,
+                FONT_STYLESHEET, FONT_FAMILY
+        );
         for (ThemeVal variable : themeVariables) {
             String value = getColor(variable);
             String defaultValue = variable.getDefaultValue();
