@@ -19,6 +19,9 @@ import com.djrapitops.plan.system.tasks.TaskSystem;
 import com.djrapitops.plan.system.update.VersionCheckSystem;
 import com.djrapitops.plan.system.webserver.WebServerSystem;
 import com.djrapitops.plugin.api.utility.log.Log;
+import com.djrapitops.plugin.logging.console.PluginLogger;
+import com.djrapitops.plugin.logging.error.ErrorHandler;
+import com.djrapitops.plugin.task.RunnableFactory;
 import com.djrapitops.plugin.utilities.Verify;
 
 /**
@@ -29,6 +32,10 @@ import com.djrapitops.plugin.utilities.Verify;
  * @author Rsl1122
  */
 public abstract class PlanSystem implements SubSystem {
+
+    protected final PluginLogger logger;
+    protected final RunnableFactory runnableFactory;
+    protected final ErrorHandler errorHandler;
 
     @Deprecated
     protected static PlanSystem testSystem;
@@ -49,8 +56,12 @@ public abstract class PlanSystem implements SubSystem {
     // Initialized in this class
     private Processing processing;
 
-    public PlanSystem() {
-        processing = new Processing();
+    public PlanSystem(PluginLogger logger, RunnableFactory runnableFactory, ErrorHandler errorHandler) {
+        this.logger = logger;
+        this.runnableFactory = runnableFactory;
+        this.errorHandler = errorHandler;
+
+        processing = new Processing(this);
         webServerSystem = new WebServerSystem();
         cacheSystem = new CacheSystem(this);
     }
@@ -184,5 +195,17 @@ public abstract class PlanSystem implements SubSystem {
 
     public Processing getProcessing() {
         return processing;
+    }
+
+    public PluginLogger getLogger() {
+        return logger;
+    }
+
+    public RunnableFactory getRunnableFactory() {
+        return runnableFactory;
+    }
+
+    public ErrorHandler getErrorHandler() {
+        return errorHandler;
     }
 }

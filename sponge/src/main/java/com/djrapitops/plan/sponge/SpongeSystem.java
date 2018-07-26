@@ -35,6 +35,7 @@ import java.util.UUID;
 public class SpongeSystem extends PlanSystem implements ServerSystem {
 
     public SpongeSystem(PlanSponge plugin) {
+        super(plugin.getPluginLogger(), plugin.getRunnableFactory(), plugin.getErrorHandler());
         PlanSystem.setTestSystem(this);
 
         Log.setErrorManager(new PlanErrorManager());

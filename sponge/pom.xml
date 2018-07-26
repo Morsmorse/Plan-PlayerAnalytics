@@ -31,13 +31,5 @@
             <version>LATEST</version>
             <scope>provided</scope>
         </dependency>
-
-        <!--&lt;!&ndash;TEMPORARY DEPENDENCY&ndash;&gt;-->
-        <!--<dependency>-->
-            <!--<groupId>org.bukkit</groupId>-->
-            <!--<artifactId>bukkit</artifactId>-->
-            <!--<version>1.12.2-R0.1-SNAPSHOT</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
     </dependencies>
 </project>

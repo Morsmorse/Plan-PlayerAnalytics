@@ -32,13 +32,9 @@ import com.djrapitops.plan.system.settings.theme.PlanColorScheme;
 import com.djrapitops.plugin.BukkitPlugin;
 import com.djrapitops.plugin.StaticHolder;
 import com.djrapitops.plugin.api.Benchmark;
-import com.djrapitops.plugin.api.utility.log.DebugLog;
-import com.djrapitops.plugin.api.utility.log.Log;
 import com.djrapitops.plugin.command.ColorScheme;
+import com.djrapitops.plugin.logging.L;
 import org.bukkit.configuration.file.FileConfiguration;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Main class for Bukkit that manages the plugin.
@@ -81,22 +77,21 @@ public class PlanBukkit extends BukkitPlugin implements PlanPlugin {
             BStats bStats = new BStats(this);
             bStats.registerMetrics();
 
-            Log.debug("Verbose debug messages are enabled.");
+            logger.debug("Verbose debug messages are enabled.");
             Benchmark.stop("Enable", "Enable");
-            Log.logDebug("Enable");
-            Log.info(Locale.get(Msg.ENABLED).toString());
+            logger.info(Locale.get(Msg.ENABLED).toString());
         } catch (AbstractMethodError e) {
-            Log.error("Plugin ran into AbstractMethodError - Server restart is required. Likely cause is updating the jar without a restart.");
+            logger.error("Plugin ran into AbstractMethodError - Server restart is required. Likely cause is updating the jar without a restart.");
         } catch (EnableException e) {
-            Log.error("----------------------------------------");
-            Log.error("Error: " + e.getMessage());
-            Log.error("----------------------------------------");
-            Log.error("Plugin Failed to Initialize Correctly. If this issue is caused by config settings you can use /plan reload");
+            logger.error("----------------------------------------");
+            logger.error("Error: " + e.getMessage());
+            logger.error("----------------------------------------");
+            logger.error("Plugin Failed to Initialize Correctly. If this issue is caused by config settings you can use /plan reload");
             onDisable();
         } catch (Exception e) {
-            Logger.getGlobal().log(Level.SEVERE, this.getClass().getSimpleName() + "-v" + getVersion(), e);
-            Log.error("Plugin Failed to Initialize Correctly. If this issue is caused by config settings you can use /plan reload");
-            Log.error("This error should be reported at https://github.com/Rsl1122/PlanBukkit-PlayerAnalytics/issues");
+            logger.log(L.CRITICAL, this.getClass().getSimpleName() + "-v" + getVersion(), e);
+            logger.error("Plugin Failed to Initialize Correctly. If this issue is caused by config settings you can use /plan reload");
+            logger.error("This error should be reported at https://github.com/Rsl1122/PlanBukkit-PlayerAnalytics/issues");
             onDisable();
         }
         registerCommand("plan", new PlanCommand(this));
@@ -114,9 +109,8 @@ public class PlanBukkit extends BukkitPlugin implements PlanPlugin {
     public void onDisable() {
         system.disable();
 
-        Log.info(Locale.get(Msg.DISABLED).toString());
+        logger.info(Locale.get(Msg.DISABLED).toString());
         Benchmark.pluginDisabled(PlanBukkit.class);
-        DebugLog.pluginDisabled(PlanBukkit.class);
     }
 
     @Override

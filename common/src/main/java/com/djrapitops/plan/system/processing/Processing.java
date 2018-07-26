@@ -5,7 +5,9 @@ import com.djrapitops.plan.api.exceptions.EnableException;
 import com.djrapitops.plan.system.PlanSystem;
 import com.djrapitops.plan.system.SubSystem;
 import com.djrapitops.plugin.StaticHolder;
-import com.djrapitops.plugin.api.utility.log.Log;
+import com.djrapitops.plugin.logging.L;
+import com.djrapitops.plugin.logging.console.PluginLogger;
+import com.djrapitops.plugin.logging.error.ErrorHandler;
 import com.djrapitops.plugin.utilities.Verify;
 
 import java.util.List;
@@ -14,15 +16,21 @@ import java.util.concurrent.*;
 // TODO Singleton
 public class Processing implements SubSystem {
 
+    private final PluginLogger logger;
+    private final ErrorHandler errorHandler;
+
     private final ExecutorService nonCriticalExecutor;
     private final ExecutorService criticalExecutor;
 
-    public Processing() {
+    public Processing(PlanSystem system) {
         nonCriticalExecutor = Executors.newFixedThreadPool(6);
         criticalExecutor = Executors.newFixedThreadPool(2);
         saveInstance(nonCriticalExecutor);
         saveInstance(criticalExecutor);
         saveInstance(this);
+
+        logger = system.getLogger();
+        errorHandler = system.getErrorHandler();
     }
 
     public static void submit(Runnable runnable) {
@@ -95,7 +103,7 @@ public class Processing implements SubSystem {
 
     private static <T> T exceptionHandler(T t, Throwable throwable) {
         if (throwable != null) {
-            Log.toLog(Processing.class, throwable.getCause());
+            getInstance().errorHandler.logError(L.ERROR, Processing.class, throwable.getCause());
         }
         return t;
     }
@@ -131,14 +139,14 @@ public class Processing implements SubSystem {
     public void disable() {
         nonCriticalExecutor.shutdown();
         List<Runnable> criticalTasks = criticalExecutor.shutdownNow();
-        Log.info("Processing critical unprocessed tasks. (" + criticalTasks.size() + ")");
+        logger.info("Processing critical unprocessed tasks. (" + criticalTasks.size() + ")");
         for (Runnable runnable : criticalTasks) {
             try {
                 runnable.run();
             } catch (Exception | NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
-                Log.toLog(this.getClass(), e);
+                errorHandler.logError(L.ERROR, this.getClass(), e);
             }
         }
-        Log.info("Processing complete.");
+        logger.info("Processing complete.");
     }
 }
