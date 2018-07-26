@@ -5,9 +5,9 @@
 package com.djrapitops.plan.data.element;
 
 import com.djrapitops.plan.data.store.mutators.formatting.Formatter;
-import com.djrapitops.plan.utilities.FormatUtils;
 import com.djrapitops.plan.utilities.html.Html;
 import com.djrapitops.plan.utilities.html.icon.Icon;
+import com.djrapitops.plugin.utilities.ArrayUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class TableContainer {
     }
 
     public TableContainer(boolean players, String... header) {
-        this.header = FormatUtils.mergeArrays(
+        this.header = ArrayUtil.merge(
                 new String[]{Icon.called("user").build() + " Player"},
                 header
         );
