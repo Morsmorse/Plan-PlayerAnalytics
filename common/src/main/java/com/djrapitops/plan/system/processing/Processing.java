@@ -103,7 +103,7 @@ public class Processing implements SubSystem {
 
     private static <T> T exceptionHandler(T t, Throwable throwable) {
         if (throwable != null) {
-            getInstance().errorHandler.logError(L.ERROR, Processing.class, throwable.getCause());
+            getInstance().errorHandler.log(L.ERROR, Processing.class, throwable.getCause());
         }
         return t;
     }
@@ -144,7 +144,7 @@ public class Processing implements SubSystem {
             try {
                 runnable.run();
             } catch (Exception | NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
-                errorHandler.logError(L.ERROR, this.getClass(), e);
+                errorHandler.log(L.ERROR, this.getClass(), e);
             }
         }
         logger.info("Processing complete.");
